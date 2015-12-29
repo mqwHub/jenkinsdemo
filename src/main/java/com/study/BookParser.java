@@ -1,51 +1,68 @@
 package com.study;
 
-import java.io.InputStream;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class BookParser extends DefaultHandler {
+import com.sun.xml.internal.ws.util.StringUtils;
 
-	public static void main(String[] args) throws Exception {
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser parser = factory.newSAXParser();
-		InputStream is = BookParser.class.getClassLoader().getResourceAsStream("book.xml");
-		parser.parse(is, new BookParser());
-	}
+public class BookParser extends DefaultHandler {
+	
+	private List<Book> books;
+	
+	private String tag;
+	
+	private Book book;
 
 	@Override
 	public void startDocument() throws SAXException {
-		// TODO Auto-generated method stub
 		super.startDocument();
+		books = new ArrayList<Book>();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		// TODO Auto-generated method stub
 		super.endDocument();
 	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
+		tag = qName;
+		if (qName.equalsIgnoreCase("book")) {
+			book = new Book();
+		}
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		// TODO Auto-generated method stub
 		super.endElement(uri, localName, qName);
+		tag = "/" + qName;
+		if (qName.equalsIgnoreCase("book")) {
+			books.add(book);
+		}
 	}
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		// TODO Auto-generated method stub
 		super.characters(ch, start, length);
 		String content = new String(ch, start, length);
-		System.out.println(content);
+		if (tag.equalsIgnoreCase("name") || tag.equalsIgnoreCase("price")) {
+			try {
+				Method method = Book.class.getMethod("set" + StringUtils.capitalize(tag), String.class);
+				method.invoke(book, content);
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}			
+		}
+	}
+	
+	public List<Book> getBooks() {
+		return books;
 	}
 }

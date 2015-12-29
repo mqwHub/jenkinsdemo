@@ -21,4 +21,9 @@ public class Book {
 	public void setPrice(String price) {
 		this.price = price;
 	}
+
+	@Override
+	public String toString() {
+		return "Book [name=" + name + ", price=" + price + "]";
+	}
 }
