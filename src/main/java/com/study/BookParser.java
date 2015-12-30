@@ -35,6 +35,7 @@ public class BookParser extends DefaultHandler {
 		tag = qName;
 		if (qName.equalsIgnoreCase("book")) {
 			book = new Book();
+			book.setId(Integer.parseInt(attributes.getValue(0)));
 		}
 	}
 

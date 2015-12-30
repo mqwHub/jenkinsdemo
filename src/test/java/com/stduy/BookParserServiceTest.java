@@ -20,5 +20,6 @@ public class BookParserServiceTest {
 		Assert.assertNotNull(books.get(0));
 		Assert.assertEquals("thinking in java", books.get(0).getName());
 		Assert.assertEquals("85.5", books.get(0).getPrice());
+		Assert.assertEquals(12, books.get(0).getId().intValue());
 	}
 }
